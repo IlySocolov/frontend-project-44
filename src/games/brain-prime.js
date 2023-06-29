@@ -1,19 +1,30 @@
-import random from '../utils/utils.js';
+import readlineSync from 'readline-sync';
+import gameEngine from '../index.js';
+import getAnswers from '../answers-generator.js';
 
-const isPrime = (num) => {
-  for (let i = 2, s = Math.sqrt(num); i <= s; i += 1) {
-    if (num % i === 0) return false;
+const MIN = 2;
+const MAX = 100;
+const DESC = 'Answer "yes" if given number is prime. Otherwise answer "no".';
+
+const getRandomExpression = () => Math.floor(MIN + Math.random() * (MAX + 1 - MIN));
+
+const getCorrectAnswer = (number) => {
+  if (number < 2) {
+    return 'no';
   }
-  return num > 1;
+  for (let i = 2; i <= Math.sqrt(number); i += 1) {
+    if (number % i === 0) {
+      return 'no';
+    }
+  }
+  return 'yes';
 };
 
-const brainPime = () => {
-  const number = random(1, 100);
-  return ({
-    task: 'Answer "yes" if given number is prime. Otherwise answer "no".',
-    question: number,
-    rightAnswer: isPrime(number) ? 'yes' : 'no',
-  });
+const getUserAnswer = (expression) => {
+  console.log(`Question: ${expression}`);
+  return readlineSync.question('Your answer: ').toLowerCase();
 };
 
-export default brainPime;
+const brainPrime = () => getAnswers(getRandomExpression, getCorrectAnswer, getUserAnswer);
+
+export default () => gameEngine(brainPrime, DESC);

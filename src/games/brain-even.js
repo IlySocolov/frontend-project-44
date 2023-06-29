@@ -1,18 +1,24 @@
-import getRandomInteger from '../utils/utils.js';
+import readlineSync from 'readline-sync';
+import gameEngine from '../index.js';
+import getAnswers from '../answers-generator.js';
+import getRandomNumber from '../number-generator.js';
 
-const brainEven = () => {
-  let isEven;
-  const randomInteger = getRandomInteger(1, 100);
-  if (randomInteger % 2 === 0) {
-    isEven = true;
-  } else {
-    isEven = false;
-  }
-  return ({
-    task: 'Answer "yes" if the number is even, otherwise answer "no".',
-    question: `${randomInteger}`,
-    rightAnswer: isEven === true ? 'yes' : 'no',
-  });
+const MIN = 0;
+const MAX = 100;
+const DESC = 'Answer "yes" if the number is even, otherwise answer "no".';
+
+const getRandomExpression = () => getRandomNumber(MIN, MAX);
+
+const getCorrectAnswer = (number) => {
+  const isEven = number % 2 === 0;
+  return isEven ? 'yes' : 'no';
 };
 
-export default brainEven;
+const getUserAnswer = (number) => {
+  console.log(`Question: ${number}`);
+  return readlineSync.question('Your answer: ').toLowerCase();
+};
+
+const brainEven = () => getAnswers(getRandomExpression, getCorrectAnswer, getUserAnswer);
+
+export default () => gameEngine(brainEven, DESC);

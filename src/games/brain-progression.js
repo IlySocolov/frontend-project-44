@@ -1,20 +1,42 @@
-import random from '../utils/utils.js';
+import readlineSync from 'readline-sync';
+import gameEngine from '../index.js';
+import getAnswers from '../answers-generator.js';
+import getRandomNumber from '../../../frontend-project-43/number-generator.js';
 
-const constbrainProgression = () => {
-  const progress = [];
-  const base = random(1, 100);
-  const coef = random(1, 10);
-  for (let index = 0; index < 10; index += 1) {
-    progress.push(base + (coef * index));
+const MIN_LENGTH = 5;
+const MAX_LENGTH = 10;
+const MIN_NUMBER = 0;
+const MAX_NUMBER = 100;
+const STEP = 2;
+const DESC = 'What number is missing in the progression?';
+
+const getRandomExpression = () => {
+  const arr = [];
+  const length = getRandomNumber(MIN_LENGTH, MAX_LENGTH);
+  const index = getRandomNumber(0, length - 1);
+  let element = getRandomNumber(MIN_NUMBER, MAX_NUMBER);
+  for (let i = 0; i < length; i += 1) {
+    if (i === index) {
+      element += STEP;
+      arr.push('..');
+    } else {
+      arr.push((element += STEP));
+    }
   }
-  const index = random(0, progress.length - 1);
-  const result = progress[index];
-  progress[index] = '..';
-  return ({
-    task: 'What number is missing in the progression?',
-    question: progress.join(' '),
-    rightAnswer: result,
-  });
+  return arr.join(' ');
 };
 
-export default constbrainProgression;
+const getCorrectAnswer = (expression) => {
+  const arr = expression.split(' ');
+  const missedElementIndex = arr.indexOf('..');
+  return missedElementIndex === 0 ? `${arr[1] - STEP}` : `${Number(arr[missedElementIndex - 1]) + STEP}`;
+};
+
+const getUserAnswer = (expression) => {
+  console.log(`Question: ${expression}`);
+  return readlineSync.question('Your answer: ');
+};
+
+const brainProgression = () => getAnswers(getRandomExpression, getCorrectAnswer, getUserAnswer);
+
+export default () => gameEngine(brainProgression, DESC);

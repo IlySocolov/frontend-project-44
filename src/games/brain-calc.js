@@ -1,42 +1,45 @@
-import getRandomInteger from '../utils/utils.js';
+import readlineSync from 'readline-sync';
+import gameEngine from '../index.js';
+import getAnswers from '../answers-generator.js';
+import getRandomNumber from '../number-generator.js';
 
-const computedAnswer = (action, num1, num2) => {
-  switch (action) {
-    case '+':
-      return num1 + num2;
+const MIN = 0;
+const MAX = 10;
+const OPERATIONS = ['+', '-', '*'];
+const DESC = 'What is the result of the expression?';
+
+const getRandomExpression = () => {
+  const operand1 = getRandomNumber(MIN, MAX);
+  const operand2 = getRandomNumber(MIN, MAX);
+  const operation = OPERATIONS[Math.floor(Math.random() * OPERATIONS.length)];
+  return `${operand1} ${operation} ${operand2}`;
+};
+
+const getCorrectAnswer = (expression) => {
+  const [num1, operator, num2] = expression.split(' ');
+  let result = 0;
+  switch (operator) {
     case '-':
-      return num1 - num2;
+      result = num1 - num2;
+      break;
+    case '+':
+      result = Number(num1) + Number(num2);
+      break;
     case '*':
-      return num1 * num2;
+      result = num1 * num2;
+      break;
     default:
-      throw new Error();
+      break;
   }
+
+  return String(result);
 };
 
-const getRandom = () => {
-  switch (getRandomInteger(1, 3)) {
-    case 1:
-      return '+';
-    case 2:
-      return '-';
-    case 3:
-      return '*';
-    default:
-      return '+';
-  }
+const getUserAnswer = (expression) => {
+  console.log(`Question: ${expression}`);
+  return readlineSync.question('Your answer: ');
 };
 
-const brainCalc = () => {
-  const action = getRandom();
-  const firstNumber = getRandomInteger(1, 100);
-  const secondNumber = getRandomInteger(1, 100);
-  const coorectAnswer = computedAnswer(action, firstNumber, secondNumber);
+const brainCalc = () => getAnswers(getRandomExpression, getCorrectAnswer, getUserAnswer);
 
-  return ({
-    task: 'What is the result of the expression?',
-    question: `${firstNumber} ${action} ${secondNumber}`,
-    rightAnswer: coorectAnswer,
-  });
-};
-
-export default brainCalc;
+export default () => gameEngine(brainCalc, DESC);

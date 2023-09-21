@@ -1,7 +1,7 @@
 import readlineSync from 'readline-sync';
 import gameEngine from '../index.js';
 import getAnswers from '../answers-generator.js';
-import getRandomNumber from '../../../frontend-project-43/number-generator.js';
+import getRandomNumber from '../number-generator.js';
 
 const MIN_LENGTH = 5;
 const MAX_LENGTH = 10;
